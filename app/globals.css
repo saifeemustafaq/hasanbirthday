@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+/* ─── Reset & base ─────────────────────────────────────────── */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  height: 100%;
+}
+
+/* Use dynamic viewport height so content isn't hidden under iOS Safari toolbar */
+.min-h-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+  /* Removes 300ms tap delay on Android/older iOS */
+  touch-action: manipulation;
+  /* Removes grey tap flash on iOS */
+  -webkit-tap-highlight-color: transparent;
+  /* Use full available height on iOS Safari (avoids toolbar overlap) */
+  min-height: 100vh;
+  /* Fallback for browsers that support it */
+  min-height: -webkit-fill-available;
+}
+
+/* ─── Subtle star dots (paint-friendly: no JS, no animation) ── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 15%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 65%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 55%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 92% 25%, rgba(255,255,255,0.3) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Boarding pass card ─────────────────────────────────────── */
+.boarding-pass {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.45),
+    0 0 0 1px rgba(255,255,255,0.08);
+  /* Promote to GPU layer so child repaints don't affect the background */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.boarding-pass::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #0ea5e9, #f59e0b, #0ea5e9);
+  z-index: 1;
+}
+
+/* ─── Perforation ──────────────────────────────────────────── */
+.perforation-line {
+  border-top: 2px dashed #cbd5e1;
+  margin: 0 -8px;
+}
+
+.circle-cutout-left,
+.circle-cutout-right {
+  width: 24px;
+  height: 24px;
+  background: #0f172a;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.circle-cutout-left  { left:  -12px; }
+.circle-cutout-right { right: -12px; }
+
+/* ─── Pure-CSS barcode (replaces 28 JS-generated DOM nodes) ─── */
+.barcode-strip {
+  height: 28px;
+  border-radius: 1px;
+  opacity: 0.22;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #1e293b 0px,    #1e293b 2px,
+    transparent 2px,transparent 5px,
+    #1e293b 5px,    #1e293b 7px,
+    transparent 7px,transparent 11px,
+    #1e293b 11px,   #1e293b 14px,
+    transparent 14px,transparent 16px,
+    #1e293b 16px,   #1e293b 19px,
+    transparent 19px,transparent 22px,
+    #1e293b 22px,   #1e293b 25px,
+    transparent 25px,transparent 27px
+  );
+}
+
+/* ─── Winner glow — opacity-only animation (GPU-composited) ── */
+/*
+ * Animating box-shadow directly triggers paint on every frame.
+ * Instead we animate opacity on a pseudo-element that already has
+ * the full shadow applied. Opacity IS composited by the GPU.
+ */
+.winner-glow-wrap {
+  position: relative;
+  /* Needs overflow visible so the glow extends past the card */
+}
+
+.winner-glow-wrap::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  box-shadow:
+    0 0 32px rgba(245,158,11,0.7),
+    0 0 64px rgba(245,158,11,0.35);
+  animation: glow-pulse 2.5s ease-in-out infinite;
+  /* Animate only opacity — pure compositor, no paint ─── */
+  will-change: opacity;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%       { opacity: 1;    }
+}
+
+/* ─── Entrance animations ──────────────────────────────────── */
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.float-in          { animation: float-in 0.6s ease-out both; will-change: transform, opacity; }
+.float-in-delay-1  { animation-delay: 0.08s; }
+.float-in-delay-2  { animation-delay: 0.2s;  }
+.float-in-delay-3  { animation-delay: 0.34s; }
+.float-in-delay-4  { animation-delay: 0.48s; }
+
+/* ─── Respect user's motion preference ────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .float-in,
+  .winner-glow-wrap::after {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
