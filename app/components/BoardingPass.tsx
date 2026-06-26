@@ -1,3 +1,5 @@
+import PlaneFlyBy from "./PlaneFlyBy";
+
 interface BoardingPassProps {
   type: "winner" | "general";
   number?: number;
@@ -20,6 +22,8 @@ export default function BoardingPass({
       className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8"
       style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
     >
+      {isWinner && <PlaneFlyBy />}
+
       {/* Plane + event name */}
       <div className="float-in text-center mb-5">
         <div
