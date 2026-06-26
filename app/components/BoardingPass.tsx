@@ -18,12 +18,19 @@ export default function BoardingPass({
   const isWinner = type === "winner";
 
   return (
-    <div
-      className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8"
-      style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
-    >
+    <>
+      {/*
+       * PlaneFlyBy is intentionally rendered OUTSIDE the relative z-10 wrapper.
+       * Inside that stacking context z=5 would beat the card content at z=auto.
+       * Outside it, z=5 (planes) < z=10 (card wrapper) in the root stacking
+       * context, so planes naturally slide behind the boarding-pass card.
+       */}
       {isWinner && <PlaneFlyBy />}
 
+      <div
+        className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8"
+        style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}
+      >
       {/* Plane + event name */}
       <div className="float-in text-center mb-5">
         <div
@@ -135,5 +142,6 @@ export default function BoardingPass({
         Celebrating Hasan&apos;s first trip around the sun 🌍
       </p>
     </div>
+    </>
   );
 }
