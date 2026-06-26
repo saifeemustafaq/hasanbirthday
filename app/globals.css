@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+:root {
+  --sky: #0ea5e9;
+  --sky-dark: #0369a1;
+  --gold: #f59e0b;
+  --gold-dark: #b45309;
+  --navy: #0f172a;
+  --cream: #fefce8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+  min-height: 100vh;
+}
+
+/* Subtle star dots */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 15%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 65%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 55%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 92% 25%, rgba(255,255,255,0.3) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.boarding-pass {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 25px 50px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(255,255,255,0.1);
+}
+
+.boarding-pass::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #0ea5e9, #f59e0b, #0ea5e9);
+}
+
+.perforation-line {
+  border-top: 2px dashed #cbd5e1;
+  margin: 0 -8px;
+}
+
+.circle-cutout-left {
+  width: 24px;
+  height: 24px;
+  background: #0f172a;
+  border-radius: 50%;
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.circle-cutout-right {
+  width: 24px;
+  height: 24px;
+  background: #0f172a;
+  border-radius: 50%;
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes winner-glow {
+  0%,100% { box-shadow: 0 0 20px rgba(245,158,11,0.4), 0 0 40px rgba(245,158,11,0.2); }
+  50%      { box-shadow: 0 0 30px rgba(245,158,11,0.7), 0 0 60px rgba(245,158,11,0.35); }
+}
+
+.winner-glow {
+  animation: winner-glow 2.5s ease-in-out infinite;
+}
+
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.float-in          { animation: float-in 0.7s ease-out both; }
+.float-in-delay-1  { animation-delay: 0.1s; }
+.float-in-delay-2  { animation-delay: 0.25s; }
+.float-in-delay-3  { animation-delay: 0.4s; }
+.float-in-delay-4  { animation-delay: 0.55s; }
