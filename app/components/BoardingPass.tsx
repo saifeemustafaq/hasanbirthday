@@ -25,7 +25,7 @@ export default function BoardingPass({
        * Outside it, z=5 (planes) < z=10 (card wrapper) in the root stacking
        * context, so planes naturally slide behind the boarding-pass card.
        */}
-      {isWinner && <PlaneFlyBy />}
+      <PlaneFlyBy />
 
       <div
         className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8"
