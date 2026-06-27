@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
 import { Plane } from "lucide-react";
+
+const FF_KEY = "ff_flight_animation";
 
 // ─── Bezier helpers ───────────────────────────────────────────────────────────
 
@@ -64,6 +66,14 @@ const NUM_PLANES = 4;
 
 export default function PlaneFlyBy() {
   const reduced = useReducedMotion();
+
+  // Read feature flag from localStorage (default ON if not explicitly disabled)
+  const [flagEnabled, setFlagEnabled] = useState(true);
+  useEffect(() => {
+    const stored = localStorage.getItem(FF_KEY);
+    setFlagEnabled(stored === null || stored === "1");
+  }, []);
+
   const wrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
   const planesRef   = useRef<PlaneState[]>([]);
 
@@ -115,7 +125,7 @@ export default function PlaneFlyBy() {
     return () => cancelAnimationFrame(raf);
   }, [reduced]);
 
-  if (reduced) return null;
+  if (reduced || !flagEnabled) return null;
 
   return (
     <>
