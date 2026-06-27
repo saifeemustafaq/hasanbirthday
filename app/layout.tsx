@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import StarField from "./components/StarField";
 
 export const metadata: Metadata = {
   title: "Hasan's First Birthday ✈️",
@@ -28,7 +29,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <StarField />
+        {children}
+      </body>
     </html>
   );
 }
