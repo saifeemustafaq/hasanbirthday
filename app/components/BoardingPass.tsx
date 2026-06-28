@@ -217,8 +217,9 @@ export default function BoardingPass({
                     <div className="perforation-line" />
                   </div>
 
-                  {/* Message body */}
-                  <div className="bg-white px-5 pb-6">
+                  {/* Message body — pb-10 gives ~2 extra lines of height so the
+                      back face has room on phones where text wraps differently */}
+                  <div className="bg-white px-5 pb-10">
                     <p className="text-slate-700 text-[16px] leading-relaxed text-center">
                       {message}
                     </p>
