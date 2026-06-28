@@ -12,7 +12,7 @@ export interface Attendee {
 }
 
 async function getDb() {
-  const client = await clientPromise;
+  const client = await clientPromise();
   return client.db(DB);
 }
 
