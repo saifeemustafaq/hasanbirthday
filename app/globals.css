@@ -5,6 +5,14 @@ html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   height: 100%;
+  /*
+   * Gradient lives on <html> with background-attachment: fixed so it
+   * stays locked to the viewport on all browsers (including iOS Safari,
+   * which ignores background-attachment: fixed on <body>).
+   * This prevents the visible "seam" when content is taller than 100vh.
+   */
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+  background-attachment: fixed;
 }
 
 /* Use dynamic viewport height so content isn't hidden under iOS Safari toolbar */
@@ -24,7 +32,8 @@ body {
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+  /* Background is on <html> so it stays fixed; body is transparent */
+  background: transparent;
   /* Removes 300ms tap delay on Android/older iOS */
   touch-action: manipulation;
   /* Removes grey tap flash on iOS */
@@ -62,9 +71,16 @@ body::before {
   box-shadow:
     0 20px 40px rgba(0,0,0,0.45),
     0 0 0 1px rgba(255,255,255,0.08);
-  /* Promote to GPU layer so child repaints don't affect the background */
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
+  /*
+   * backface-visibility: hidden applied here in addition to .card-face.
+   * On iOS/Safari, transform: translateZ(0) creates its own GPU layer
+   * which can ignore the parent's backface-visibility, leaking mirrored
+   * content during the flip. Declaring it directly on this element fixes it.
+   * translateZ(0) is removed — the preserve-3d context already promotes
+   * the face to the GPU.
+   */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .boarding-pass::before {
@@ -100,7 +116,7 @@ body::before {
 
 /* ─── Pure-CSS barcode (replaces 28 JS-generated DOM nodes) ─── */
 .barcode-strip {
-  height: 28px;
+  height: 68px;
   border-radius: 1px;
   opacity: 0.22;
   background-image: repeating-linear-gradient(
@@ -219,6 +235,9 @@ body::before {
   box-shadow:
     0 20px 40px rgba(0,0,0,0.45),
     0 0 0 1px rgba(255,255,255,0.08);
+  /* Same backface fix as .boarding-pass above */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .boarding-pass-back::-webkit-scrollbar {

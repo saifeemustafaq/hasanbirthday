@@ -49,6 +49,7 @@ export default function BoardingPass({
   const [submitError, setSubmitError] = useState("");
   const [loadingMsg, setLoadingMsg] = useState(0);
   const loadingTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const tapOrigin = useRef<{ x: number; y: number } | null>(null);
 
   const LOADING_MESSAGES = [
     "Checking the passenger manifest… ✈️",
@@ -78,6 +79,19 @@ export default function BoardingPass({
 
   function toggle() {
     setFlipped((f) => !f);
+  }
+
+  function handlePointerDown(e: React.PointerEvent) {
+    tapOrigin.current = { x: e.clientX, y: e.clientY };
+  }
+
+  function handlePointerUp(e: React.PointerEvent) {
+    if (!tapOrigin.current) return;
+    const dx = Math.abs(e.clientX - tapOrigin.current.x);
+    const dy = Math.abs(e.clientY - tapOrigin.current.y);
+    tapOrigin.current = null;
+    // Only flip if the pointer barely moved — genuine tap, not a scroll gesture
+    if (dx < 8 && dy < 8) toggle();
   }
 
   async function handleSubmit() {
@@ -147,7 +161,6 @@ export default function BoardingPass({
             {/* card-inner rotates on tap/click */}
             <div
               className={`card-inner${flipped ? " card-inner--flipped" : ""}`}
-              onClick={toggle}
               role="button"
               tabIndex={0}
               aria-label={
@@ -155,6 +168,9 @@ export default function BoardingPass({
                   ? "Flip back to boarding pass"
                   : "Flip card to reveal fun facts about Hasan"
               }
+              style={{ touchAction: "pan-y" }}
+              onPointerDown={handlePointerDown}
+              onPointerUp={handlePointerUp}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") toggle();
               }}
@@ -217,8 +233,9 @@ export default function BoardingPass({
                     <div className="perforation-line" />
                   </div>
 
-                  {/* Message body */}
-                  <div className="bg-white px-5 pb-6">
+                  {/* Message body — pb-10 gives ~2 extra lines of height so the
+                      back face has room on phones where text wraps differently */}
+                  <div className="bg-white px-5 pb-10">
                     <p className="text-slate-700 text-[16px] leading-relaxed text-center">
                       {message}
                     </p>
