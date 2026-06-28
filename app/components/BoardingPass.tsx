@@ -43,6 +43,8 @@ export default function BoardingPass({
 }: BoardingPassProps) {
   const isWinner = type === "winner";
   const [flipped, setFlipped] = useState(false);
+  const [animating, setAnimating] = useState(false);
+  const animTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -79,6 +81,10 @@ export default function BoardingPass({
 
   function toggle() {
     setFlipped((f) => !f);
+    // Fire the shimmer for the duration of the animation
+    if (animTimer.current) clearTimeout(animTimer.current);
+    setAnimating(true);
+    animTimer.current = setTimeout(() => setAnimating(false), 560);
   }
 
   function handlePointerDown(e: React.PointerEvent) {
@@ -155,26 +161,18 @@ export default function BoardingPass({
         <div
           className="w-full max-w-sm float-in float-in-delay-1 winner-glow-wrap"
         >
-          <div className="card-scene">
-            {/* card-inner rotates on tap/click */}
-            <div
-              className={`card-inner${flipped ? " card-inner--flipped" : ""}`}
-              role="button"
-              tabIndex={0}
-              aria-label={
-                flipped
-                  ? "Flip back to boarding pass"
-                  : "Flip card to reveal fun facts about Hasan"
-              }
-              style={{ touchAction: "pan-y" }}
-              onPointerDown={handlePointerDown}
-              onPointerUp={handlePointerUp}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") toggle();
-              }}
-            >
+          <div
+            className={`magic-reveal-container${flipped ? " is-flipped" : ""}${animating ? " is-animating" : ""}`}
+            role="button"
+            tabIndex={0}
+            aria-label={flipped ? "Tap to go back to boarding pass" : "Tap to reveal fun facts about Hasan"}
+            style={{ touchAction: "pan-y" }}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") toggle(); }}
+          >
               {/* ── FRONT FACE ─────────────────────────────────── */}
-              <div className="card-face card-face--front">
+              <div className="magic-face-front">
                 <div className="boarding-pass">
 
                   {/* Coloured header */}
@@ -261,10 +259,10 @@ export default function BoardingPass({
                   </div>
 
                 </div>{/* /.boarding-pass */}
-              </div>{/* /.card-face--front */}
+              </div>{/* /.magic-face-front */}
 
               {/* ── BACK FACE ──────────────────────────────────── */}
-              <div className="card-face card-face--back">
+              <div className="magic-face-back">
                 <div className="boarding-pass-back">
 
                   {/* Coloured header */}
@@ -312,10 +310,9 @@ export default function BoardingPass({
                   </div>
 
                 </div>{/* /.boarding-pass-back */}
-              </div>{/* /.card-face--back */}
+              </div>{/* /.magic-face-back */}
 
-            </div>{/* /.card-inner */}
-          </div>{/* /.card-scene */}
+          </div>{/* /.magic-reveal-container */}
         </div>{/* /.winner-glow-wrap (or plain wrapper) */}
 
         {/* ── Guest fields / token reveal (general pass only) ─── */}
