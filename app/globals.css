@@ -161,6 +161,93 @@ body::before {
 .float-in-delay-3  { animation-delay: 0.34s; }
 .float-in-delay-4  { animation-delay: 0.48s; }
 
+/* ─── Card flip 3D scene ────────────────────────────────────── */
+/*
+ * Perspective lives on the scene wrapper so it stays fixed as the
+ * card-inner rotates. preserve-3d on card-inner lets both faces
+ * exist in the same 3-D space. backface-visibility: hidden on each
+ * face ensures only the front-facing side is painted.
+ */
+.card-scene {
+  perspective: 1200px;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  /* Suppress the grey flash on tap (iOS / Android) */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card-inner--flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  width: 100%;
+  /* Hide the face when it is rotated away from the viewer */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Back face starts pre-rotated so it is hidden initially,
+   and becomes visible after the card rotates 180 °.
+   bottom: 0 + overflow: hidden clamp it to the same height as the
+   front face so it never bleeds over siblings below the card. */
+.card-face--back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  overflow: hidden;
+  transform: rotateY(180deg);
+}
+
+/* ─── Boarding-pass back face ───────────────────────────────── */
+.boarding-pass-back {
+  position: relative;
+  height: 100%;
+  background: #0f172a;
+  border-radius: 16px;
+  overflow-y: auto;
+  /* hide scrollbar visually while still scrollable */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.45),
+    0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.boarding-pass-back::-webkit-scrollbar {
+  display: none;
+}
+
+/* Violet-to-amber top stripe matching the front's rainbow bar */
+.boarding-pass-back::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #7c3aed, #f59e0b, #7c3aed);
+  z-index: 1;
+}
+
+/* ─── Flip hint (subtle pulse on the front) ─────────────────── */
+.flip-hint {
+  animation: flip-hint-pulse 2.4s ease-in-out infinite;
+  will-change: opacity;
+}
+
+@keyframes flip-hint-pulse {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.85; }
+}
+
 /* ─── Respect user's motion preference ────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .float-in,
@@ -168,5 +255,14 @@ body::before {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+
+  .card-inner {
+    transition: none;
+  }
+
+  .flip-hint {
+    animation: none;
+    opacity: 0.6;
   }
 }
