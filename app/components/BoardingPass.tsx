@@ -153,9 +153,7 @@ export default function BoardingPass({
          * card-scene provides the perspective for the 3-D flip.
          */}
         <div
-          className={`w-full max-w-sm float-in float-in-delay-1${
-            isWinner ? " winner-glow-wrap" : ""
-          }`}
+          className="w-full max-w-sm float-in float-in-delay-1 winner-glow-wrap"
         >
           <div className="card-scene">
             {/* card-inner rotates on tap/click */}
